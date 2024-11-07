@@ -83,9 +83,13 @@ const gameManager = function(name1, name2) {
                 playRound(swapPlayer(), moveArray);
             }
             if(foundWinner) {
-                endGame();
+                endGame(false);
                 break;
             };
+        }
+        if(getBlocksLeft() === 0) {
+            // means there is a tie, as no winner was found
+            endGame(true);
         }
     }
 
@@ -99,8 +103,12 @@ const gameManager = function(name1, name2) {
     const getBlocksLeft = () => blocksLeft;
     const setBlocksLeft = (num) => blocksLeft = num;
 
-    const endGame = () => {
-        console.log("GAME HAS ENDED, THE WINNER IS: ", currentPlayer1 ? player1.name : player2.name);
+    const endGame = (tie) => {
+        if (tie) {
+            console.log("GAME HAS ENDED, IT'S A TIE!");
+        } else {
+            console.log("GAME HAS ENDED, THE WINNER IS: ", currentPlayer1 ? player1.name : player2.name);
+        }
         resetGame();
     }
 
