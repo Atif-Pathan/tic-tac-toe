@@ -101,7 +101,7 @@ const gameManager = function(name1, name2) {
                 let row = Math.floor(i / 3);
                 let col = i % 3;
                 let moveArray = [row, col];
-                // console.log('Button clicked:', button);
+                console.log('Button clicked:', button);
                 // console.log("swap ", swap);
                 console.log("currentplayer 1 is (BEFORE ROUND)", currentPlayer1);
                 
