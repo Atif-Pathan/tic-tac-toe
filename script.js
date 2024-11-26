@@ -26,7 +26,7 @@ const gameBoard = (function() {
     }
 
     const getBoardCell = (row, col) => {
-        console.log(board[row][col] + "\n");
+        // console.log(board[row][col] + "\n");
         return board[row][col];
     }
 
@@ -73,6 +73,13 @@ const gameManager = function(name1, name2) {
     let foundWinner = false;
     let blocksLeft = 9;
 
+    const playAgainButton = document.getElementById('play-again');
+    playAgainButton.addEventListener('click', () => {
+        resetGame(); // Call the reset function
+        playAgainButton.style.display = 'none'; // Hide the button after resetting
+        buttons.forEach(button => button.disabled = false); // Re-enable game interaction
+    });
+
     const startGame = () => {
         // Add a click event listener to each button
         buttons.forEach(button => {
@@ -112,11 +119,13 @@ const gameManager = function(name1, name2) {
 
     const endGame = (tie) => {
         if (tie) {
-            console.log("GAME HAS ENDED, IT'S A TIE!");
+            displayController.displayTie();
         } else {
-            console.log("GAME HAS ENDED, THE WINNER IS: ", currentPlayer1 ? player1.name : player2.name);
+            displayController.displayWinner(currentPlayer1 ? player1.name : player2.name)
         }
-        resetGame();
+        const playAgainButton = document.getElementById('play-again');
+        playAgainButton.style.display = 'block';
+        buttons.forEach(button => button.disabled = true);
     }
 
     const playRound = (currentPlayer, move) => {
@@ -136,14 +145,18 @@ const gameManager = function(name1, name2) {
 
     const resetGame = () => {
         console.log("Game Reset!");
+        setBlocksLeft(9);
         playAgain = !playAgain;
+        swap = true;
+        currentPlayer1 = false;
+        foundWinner = false;
         markerXUsed = false;
         markerOUsed = false;
+        displayController.resetBoard();
         gameBoard.resetBoard();
     }
 
     return {swapPlayer, playRound, player1, player2, currentPlayer1, getBlocksLeft, startGame, resetGame};
-
 };
 
 function createPlayer(name) {
@@ -161,11 +174,11 @@ function createPlayer(name) {
     }
     assignMark();
 
-    // also be able to the set the mark, if needed
-    // we will assume that no one can enter an invalid mark and that
-    // the two players wont get the same mark
-    const setMark = (mark) => {
-        playerMarker = mark;
+    // also be able to the set the name, if needed
+    // we will assume that no one can enter an invalid name and that
+    // the two players wont get the same name
+    const setName = (newName) => {
+        name = newName;
     }
 
     // return the mark of the current player
@@ -173,11 +186,12 @@ function createPlayer(name) {
         return playerMarker;
     }
 
-    return {setMark, getMark, name};
+    return {setName, getMark, name};
 }
 
 const displayController = (function() {
-
+    const displayResult = document.querySelector(".winner");
+    
     const updateBoard = () => {
         for (let i = 0; i < 9; i++) {
             let idName = `tile-${i}`;
@@ -188,28 +202,36 @@ const displayController = (function() {
         }
     }
 
-    return {updateBoard};
+    const resetBoard = () => {
+        for (let i = 0; i < 9; i++) {
+            let idName = `tile-${i}`;
+            let tile = document.getElementById(idName);
+            tile.textContent = "";
+            displayResult.style.display = 'none';
+        }
+    }
+
+    const displayWinner = (name) => {
+        displayResult.style.display = 'block';
+        displayResult.textContent = `The winner is ${name}!`;
+    }
+
+    const displayTie = () => {
+        displayResult.style.display = 'block';
+        displayResult.textContent = "The game ended in a Tie!";
+    }
+
+    return {updateBoard, resetBoard, displayWinner, displayTie};
     
 })();
 
 
-// while (true) {
-    gameBoard.resetBoard();
-    let player1 = prompt("Enter P1 name:");
-    let player2 = prompt("Enter P2 name:")
+gameBoard.resetBoard();
+let player1 = prompt("Enter P1 name:");
+let player2 = prompt("Enter P2 name:")
 
-    currentGame = gameManager(player1, player2);
-    console.log("P1: ", currentGame.player1.name, ", mark: ", currentGame.player1.getMark());
-    console.log("P2: ", currentGame.player2.name, ", mark: ", currentGame.player2.getMark());
+currentGame = gameManager(player1, player2);
+console.log("P1: ", currentGame.player1.name, ", mark: ", currentGame.player1.getMark());
+console.log("P2: ", currentGame.player2.name, ", mark: ", currentGame.player2.getMark());
 
-    currentGame.startGame();
-    // while (playAgain) {
-    //     
-    // }
-
-    // playAgain = confirm("Game over! Do you want to play again?");
-    // if (!playAgain) {
-    //     console.log("Game has ended, refresh to start again");
-    //     // break;
-    // }
-// }
+currentGame.startGame();

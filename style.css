@@ -95,3 +95,7 @@ ol[role="list"], ul[role="list"] {
     /* border: 1px solid black; */
     cursor: pointer;
 }
+
+#play-again, .winner {
+    display: none;
+}
