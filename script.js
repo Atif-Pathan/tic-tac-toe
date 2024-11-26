@@ -27,6 +27,7 @@ const gameBoard = (function() {
 
     const getBoardCell = (row, col) => {
         console.log(board[row][col] + "\n");
+        return board[row][col];
     }
 
     const setBoardCell = (row, col, mark) => {
@@ -66,31 +67,37 @@ const gameBoard = (function() {
 const gameManager = function(name1, name2) {
     const player1 = createPlayer(name1);
     const player2 = createPlayer(name2);
+    const buttons = document.querySelectorAll('.tile');
     let swap = true;
     let currentPlayer1 = false;
     let foundWinner = false;
     let blocksLeft = 9;
 
     const startGame = () => {
-        while(getBlocksLeft() > 0) {
-            let userInput = prompt("Enter your move in the format [row, column]:");
-            userInput = userInput.replace(/[\[\]\s]/g, '');
-            let moveArray = userInput.split(',').map(Number);
-            if (!swap) {
-                playRound((currentPlayer1 ? player1 : player2), moveArray);
-            }
-            else {
-                playRound(swapPlayer(), moveArray);
-            }
-            if(foundWinner) {
-                endGame(false);
-                break;
-            };
-        }
-        if(getBlocksLeft() === 0) {
-            // means there is a tie, as no winner was found
-            endGame(true);
-        }
+        // Add a click event listener to each button
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                let i = button.id.slice(-1);
+                let row = Math.floor(i / 3);
+                let col = i % 3;
+                let moveArray = [row, col];
+                console.log('Button clicked:', button);
+                if (!swap) {
+                    playRound((currentPlayer1 ? player1 : player2), moveArray);
+                }
+                else {
+                    playRound(swapPlayer(), moveArray);
+                }
+
+                if(foundWinner) {
+                    endGame(false);
+                }
+                else if(getBlocksLeft() === 0) {
+                    // means there is a tie, as no winner was found
+                    endGame(true);
+                }
+            });
+        });
     }
 
     const swapPlayer = () => {
@@ -120,6 +127,7 @@ const gameManager = function(name1, name2) {
             gameBoard.logGameBoard();
             decrementBlocksLeft();
             swap = true;
+            displayController.updateBoard();
         }
         else{
             swap = false;
@@ -168,8 +176,24 @@ function createPlayer(name) {
     return {setMark, getMark, name};
 }
 
+const displayController = (function() {
 
-while (true) {
+    const updateBoard = () => {
+        for (let i = 0; i < 9; i++) {
+            let idName = `tile-${i}`;
+            let tile = document.getElementById(idName);
+            let row = Math.floor(i / 3);
+            let col = i % 3;
+            tile.textContent = `${gameBoard.getBoardCell(row, col)}`;
+        }
+    }
+
+    return {updateBoard};
+    
+})();
+
+
+// while (true) {
     gameBoard.resetBoard();
     let player1 = prompt("Enter P1 name:");
     let player2 = prompt("Enter P2 name:")
@@ -178,12 +202,14 @@ while (true) {
     console.log("P1: ", currentGame.player1.name, ", mark: ", currentGame.player1.getMark());
     console.log("P2: ", currentGame.player2.name, ", mark: ", currentGame.player2.getMark());
 
-    while (playAgain) {
-        currentGame.startGame();
-    }
+    currentGame.startGame();
+    // while (playAgain) {
+    //     
+    // }
 
-    playAgain = confirm("Game over! Do you want to play again?");
-    if (!playAgain) {
-        break;
-    }
-}
+    // playAgain = confirm("Game over! Do you want to play again?");
+    // if (!playAgain) {
+    //     console.log("Game has ended, refresh to start again");
+    //     // break;
+    // }
+// }
