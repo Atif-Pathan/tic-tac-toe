@@ -75,12 +75,12 @@ ol[role="list"], ul[role="list"] {
     align-items: center;
 }
 
-.title {
-    font-size: 3rem;
+.enter-names {
+    font-size: 2rem;
 }
 
 .grid {
-    display: grid;
+    display: none;
     width: 23rem;
     gap: 1rem;
     grid-template-columns: repeat(3, 1fr);
@@ -96,6 +96,17 @@ ol[role="list"], ul[role="list"] {
     cursor: pointer;
 }
 
-#play-again, .winner {
+.btns {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#play-again, #edit-names, .winner {
     display: none;
+}
+
+#player-names {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }

@@ -1,6 +1,7 @@
 let markerXUsed = false;
 let markerOUsed = false;
 let playAgain = true;
+let currentGame = null;
 
 // IIFE for the game board as we only need one instance of the game board
 const gameBoard = (function() {
@@ -68,6 +69,9 @@ const gameManager = function(name1, name2) {
     const player1 = createPlayer(name1);
     const player2 = createPlayer(name2);
     const buttons = document.querySelectorAll('.tile');
+    const grid = document.querySelector(".grid");
+    const playerForm = document.getElementById("player-names");
+    const displayResult = document.querySelector(".winner");
     let swap = true;
     let currentPlayer1 = false;
     let foundWinner = false;
@@ -76,8 +80,17 @@ const gameManager = function(name1, name2) {
     const playAgainButton = document.getElementById('play-again');
     playAgainButton.addEventListener('click', () => {
         resetGame(); // Call the reset function
+        editNamesButton.style.display = 'none';
         playAgainButton.style.display = 'none'; // Hide the button after resetting
-        buttons.forEach(button => button.disabled = false); // Re-enable game interaction
+    });
+
+    const editNamesButton = document.getElementById('edit-names');
+    editNamesButton.addEventListener('click', () => {     
+        playerForm.style.display = "flex";
+        grid.style.display = "none";
+        displayResult.style.display = "none";
+        editNamesButton.style.display = 'none';
+        playAgainButton.style.display = 'none';
     });
 
     const startGame = () => {
@@ -88,13 +101,18 @@ const gameManager = function(name1, name2) {
                 let row = Math.floor(i / 3);
                 let col = i % 3;
                 let moveArray = [row, col];
-                console.log('Button clicked:', button);
+                // console.log('Button clicked:', button);
+                // console.log("swap ", swap);
+                console.log("currentplayer 1 is (BEFORE ROUND)", currentPlayer1);
+                
                 if (!swap) {
                     playRound((currentPlayer1 ? player1 : player2), moveArray);
                 }
                 else {
                     playRound(swapPlayer(), moveArray);
                 }
+
+                console.log("currentplayer 1 is (AFTER ROUND)", currentPlayer1);
 
                 if(foundWinner) {
                     endGame(false);
@@ -121,14 +139,17 @@ const gameManager = function(name1, name2) {
         if (tie) {
             displayController.displayTie();
         } else {
-            displayController.displayWinner(currentPlayer1 ? player1.name : player2.name)
+            displayController.displayWinner(currentPlayer1 ? player1.getName() : player2.getName())
         }
         const playAgainButton = document.getElementById('play-again');
         playAgainButton.style.display = 'block';
         buttons.forEach(button => button.disabled = true);
+        const editNamesButton = document.getElementById('edit-names');
+        editNamesButton.style.display = 'block';
     }
 
     const playRound = (currentPlayer, move) => {
+        // console.log("current player 1 = ", currentPlayer1);
         if(gameBoard.setBoardCell(move[0], move[1], currentPlayer.getMark())){
             let point = currentPlayer1 ? 1 : -1;
             foundWinner = gameBoard.updateTally(move, point);
@@ -154,6 +175,7 @@ const gameManager = function(name1, name2) {
         markerOUsed = false;
         displayController.resetBoard();
         gameBoard.resetBoard();
+        buttons.forEach(button => button.disabled = false);
     }
 
     return {swapPlayer, playRound, player1, player2, currentPlayer1, getBlocksLeft, startGame, resetGame};
@@ -161,6 +183,7 @@ const gameManager = function(name1, name2) {
 
 function createPlayer(name) {
     let playerMarker; 
+    let playerName = name;
 
     // assign a mark automatically when creating new player
     function assignMark() {
@@ -178,7 +201,11 @@ function createPlayer(name) {
     // we will assume that no one can enter an invalid name and that
     // the two players wont get the same name
     const setName = (newName) => {
-        name = newName;
+        playerName = newName;
+    }
+
+    const getName = () => {
+        return playerName;
     }
 
     // return the mark of the current player
@@ -186,7 +213,7 @@ function createPlayer(name) {
         return playerMarker;
     }
 
-    return {setName, getMark, name};
+    return {setName, getMark, getName};
 }
 
 const displayController = (function() {
@@ -225,13 +252,37 @@ const displayController = (function() {
     
 })();
 
+const getPlayerNames = (function() {
+    const playerForm = document.getElementById("player-names");
+    const grid = document.querySelector(".grid");
+    playerForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        new FormData(playerForm);
+    })
+    
+    playerForm.addEventListener("formdata", (e) => {
+        const data = e.formData;
+        getPlayerNames(data);
+    })
 
-gameBoard.resetBoard();
-let player1 = prompt("Enter P1 name:");
-let player2 = prompt("Enter P2 name:")
+    const getPlayerNames = (data) => {
+        let player1 = data.get("player1");
+        let player2 = data.get("player2");
+        gameBoard.resetBoard();
+        playerForm.style.display = "None";
+        if(!currentGame) {
+            currentGame = gameManager(player1, player2);
+            currentGame.startGame();
+        }
+        else {
+            currentGame.player1.setName(player1);
+            currentGame.player2.setName(player2);
+        }
+        currentGame.resetGame();
+        grid.style.display = "grid";
+        
+    }
 
-currentGame = gameManager(player1, player2);
-console.log("P1: ", currentGame.player1.name, ", mark: ", currentGame.player1.getMark());
-console.log("P2: ", currentGame.player2.name, ", mark: ", currentGame.player2.getMark());
+    return {};
 
-currentGame.startGame();
+})();

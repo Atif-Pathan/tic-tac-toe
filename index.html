@@ -8,7 +8,18 @@
 </head>
 <body>
     <div class="container">
-        <div class="title">Tic-Tac-Toe!</div>
+        <!-- <div class="title">Tic-Tac-Toe!</div> -->
+        <form id="player-names">
+            <div class="player-one">
+                <label for="player1">Player 1 (X):</label>
+                <input type="text" name="player1" id="player1" required>
+            </div>
+            <div class="player-two">
+                <label for="player2">Player 2 (O):</label>
+                <input type="text" name="player2" id="player2" required>
+            </div>
+            <button type="submit">Start</button>
+        </form>
         <div class="grid">
             <button class="tile" id="tile-0"></button>
             <button class="tile" id="tile-1"></button>
@@ -21,7 +32,11 @@
             <button class="tile" id="tile-8"></button>
         </div>
         <div class="winner"></div>
-        <button id="play-again">Play Again</button>
+        <div class="btns">
+            <button id="play-again">Play Again</button>
+            <button id="edit-names">Edit Name(s)</button>
+        </div>
+        
     </div>
     <script src="script.js"></script>
 </body>
