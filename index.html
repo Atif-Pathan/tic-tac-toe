@@ -18,8 +18,9 @@
                 <label for="player2">Player 2 (O):</label>
                 <input type="text" name="player2" id="player2" required>
             </div>
-            <button type="submit">Start</button>
+            <button type="submit" id="start-btn">Start</button>
         </form>
+        <div class="player-turn"></div>
         <div class="grid">
             <button class="tile" role="button" id="btn-0">
                 <span class="tile-shadow"></span>
@@ -67,7 +68,6 @@
                 <span class="tile-front" id="tile-8"> </span>
             </button>
         </div>
-        <div class="winner"></div>
         <div class="btns">
             <button id="play-again">Play Again</button>
             <button id="edit-names">Edit Name(s)</button>

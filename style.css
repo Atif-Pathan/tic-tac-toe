@@ -1,4 +1,4 @@
-/*
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Righteous&family=Roboto+Slab:wght@100..900&family=Russo+One&family=VT323&display=swap');/*
     1. Use a more-intuitive box-sizing model.
 */
 *, *::before, *::after {
@@ -22,8 +22,10 @@ body {
     -webkit-font-smoothing: antialiased;
     min-height: 100%;
     min-width: 100%;
-    --bg-color: #e9edc9;
-    --accent-color-one: #ccd5ae;
+    font-family: "Russo One", sans-serif;
+    /* --bg-color: #e9edc9; */
+    --bg-color: #ffdce7;
+    /* --accent-color-one: #000000; */
     background-color: var(--bg-color);
     /* overflow-x: hidden */
 }
@@ -70,7 +72,7 @@ ol[role="list"], ul[role="list"] {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
     justify-content: center;
     align-items: center;
 }
@@ -82,7 +84,7 @@ ol[role="list"], ul[role="list"] {
 .grid {
     display: none;
     width: 23rem;
-    gap: 1rem;
+    gap: 1.3rem;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     justify-items: center;
@@ -115,7 +117,7 @@ ol[role="list"], ul[role="list"] {
   transform: translateY(2px);
   transition:
     transform
-    600ms
+    700ms
     cubic-bezier(.3, .7, .4, 1);
 }
 
@@ -136,26 +138,30 @@ ol[role="list"], ul[role="list"] {
 }
 
 .tile-front {
+  font-family: "Righteous", serif;
   width: 7rem;
   height: 6.5rem;
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   padding: 12px 27px;
   border-radius: 12px;
-  font-size: 2rem;
+  font-size: 4rem;
+  font-weight: bold;
   color: white;
   background: hsl(345deg 100% 47%);
   will-change: transform;
   transform: translateY(-4px);
   transition:
     transform
-    600ms
+    700ms
     cubic-bezier(.3, .7, .4, 1);
 }
 
 @media (min-width: 768px) {
   .tile-front {
-    font-size: 1.25rem;
+    font-size: 4rem;
     padding: 12px 42px;
   }
 }
@@ -166,16 +172,16 @@ ol[role="list"], ul[role="list"] {
 }
 
 .tile:hover .tile-front {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
   transition:
     transform
-    250ms
+    300ms
     cubic-bezier(.3, .7, .4, 1.5);
 }
 
 .tile:active .tile-front {
-  transform: translateY(-2px);
-  transition: transform 34ms;
+  transform: translateY(0px);
+  transition: transform 100ms;
 }
 
 .tile:hover .tile-shadow {
@@ -196,16 +202,81 @@ ol[role="list"], ul[role="list"] {
 }
 
 .btns {
-    display: flex;
-    gap: 0.5rem;
+  display: none;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
 }
 
-#play-again, #edit-names, .winner {
-    display: none;
+#play-again, #edit-names, #start-btn {
+  letter-spacing: 1px;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #000;
+  background-color: white;
+  cursor: pointer;
+  border: 2px solid;
+  padding: 0.2em 0.65em 0.1em 0.65em;
+  box-shadow: 0px 3px 0px 0px;
+  border-radius: 10px;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+#player1, #player2 {
+  font-family: "VT323", serif;
+  border-radius: 10px;
+  outline: none;
+  border: 2px solid black;
+  padding: 0rem 0.7rem 0 0.7rem;
+  width: 20rem;
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+#start-btn {
+  margin-top: 1rem;
+  align-self: center;
+  width: 6rem;
+  padding: 0.2rem 0 0;
+  font-size: 1.2rem;
+}
+
+#play-again:active, #edit-names:active {
+  box-shadow: none;
+}
+
+#play-again:active, #edit-names:active, #start-btn:active {
+  top: 6px;
+}
+
+#play-again:hover, #edit-names:hover, #start-btn:hover {
+  box-shadow: 0px 5px 0px 0px;
+  transform: translateY(-4px);
+  transition:
+    transform
+    300ms
+    cubic-bezier(.3, .7, .4, 1.5);
 }
 
 #player-names {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
+}
+
+.player-one, .player-two {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-one label, .player-two label {
+  font-size: 1.8rem;
+}
+
+.player-turn {
+  font-size: 1.7rem;
+  /* font-weight: bold; */
+  word-spacing: 0.3rem;
 }

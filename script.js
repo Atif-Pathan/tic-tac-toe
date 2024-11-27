@@ -71,7 +71,8 @@ const gameManager = function(name1, name2) {
     const buttons = document.querySelectorAll('.tile');
     const grid = document.querySelector(".grid");
     const playerForm = document.getElementById("player-names");
-    const displayResult = document.querySelector(".winner");
+    const displayTurn = document.querySelector(".player-turn");
+    const btns = document.querySelector(".btns");
     let swap = true;
     let currentPlayer1 = false;
     let foundWinner = false;
@@ -79,18 +80,17 @@ const gameManager = function(name1, name2) {
 
     const playAgainButton = document.getElementById('play-again');
     playAgainButton.addEventListener('click', () => {
+        displayTurn.style.display = "none";
+        btns.style.display = "none";
         resetGame(); // Call the reset function
-        editNamesButton.style.display = 'none';
-        playAgainButton.style.display = 'none'; // Hide the button after resetting
     });
 
     const editNamesButton = document.getElementById('edit-names');
     editNamesButton.addEventListener('click', () => {     
         playerForm.style.display = "flex";
         grid.style.display = "none";
-        displayResult.style.display = "none";
-        editNamesButton.style.display = 'none';
-        playAgainButton.style.display = 'none';
+        displayTurn.style.display = "none";
+        btns.style.display = "none";
     });
 
     const startGame = () => {
@@ -100,24 +100,25 @@ const gameManager = function(name1, name2) {
                 let i = button.id.slice(-1);
                 let row = Math.floor(i / 3);
                 let col = i % 3;
-                let moveArray = [row, col];
-                console.log('Button clicked:', button);
-                // console.log("swap ", swap);
-                console.log("currentplayer 1 is (BEFORE ROUND)", currentPlayer1);
-                
+                let moveArray = [row, col];       
+                         
                 if (!swap) {
                     playRound((currentPlayer1 ? player1 : player2), moveArray);
+                    // displayTurn.style.display = "block";
+                    // displayTurn.textContent = currentPlayer1 ? `${player2.getName()}'s turn (${player2.getMark()})` : `${player1.getName()}'s turn (${player1.getMark()})`; 
                 }
                 else {
                     playRound(swapPlayer(), moveArray);
+                    // displayTurn.style.display = "block";
+                    // displayTurn.textContent = currentPlayer1 ? `${player1.getName()}'s turn (${player1.getMark()})` : `${player2.getName()}'s turn (${player2.getMark()})`; 
                 }
 
-                console.log("currentplayer 1 is (AFTER ROUND)", currentPlayer1);
-
                 if(foundWinner) {
+                    displayTurn.textContent = "";
                     endGame(false);
                 }
                 else if(getBlocksLeft() === 0) {
+                    displayTurn.textContent = "";
                     // means there is a tie, as no winner was found
                     endGame(true);
                 }
@@ -141,11 +142,8 @@ const gameManager = function(name1, name2) {
         } else {
             displayController.displayWinner(currentPlayer1 ? player1.getName() : player2.getName())
         }
-        const playAgainButton = document.getElementById('play-again');
-        playAgainButton.style.display = 'block';
         buttons.forEach(button => button.disabled = true);
-        const editNamesButton = document.getElementById('edit-names');
-        editNamesButton.style.display = 'block';
+        btns.style.display = "flex";
     }
 
     const playRound = (currentPlayer, move) => {
@@ -158,6 +156,8 @@ const gameManager = function(name1, name2) {
             decrementBlocksLeft();
             swap = true;
             displayController.updateBoard();
+            displayTurn.style.display = "block";
+            displayTurn.textContent = currentPlayer1 ? `${player2.getName()}'s turn (${player2.getMark()})` : `${player1.getName()}'s turn (${player1.getMark()})`; 
         }
         else{
             swap = false;
@@ -176,6 +176,8 @@ const gameManager = function(name1, name2) {
         displayController.resetBoard();
         gameBoard.resetBoard();
         buttons.forEach(button => button.disabled = false);
+        displayTurn.style.display = "block";
+        displayTurn.textContent = `${player1.getName()}'s turn (X)`;
     }
 
     return {swapPlayer, playRound, player1, player2, currentPlayer1, getBlocksLeft, startGame, resetGame};
@@ -217,7 +219,7 @@ function createPlayer(name) {
 }
 
 const displayController = (function() {
-    const displayResult = document.querySelector(".winner");
+    const displayResult = document.querySelector(".player-turn");
     
     const updateBoard = () => {
         for (let i = 0; i < 9; i++) {
@@ -234,18 +236,17 @@ const displayController = (function() {
             let idName = `tile-${i}`;
             let tile = document.getElementById(idName);
             tile.textContent = "";
-            displayResult.style.display = 'none';
         }
     }
 
     const displayWinner = (name) => {
         displayResult.style.display = 'block';
-        displayResult.textContent = `The winner is ${name}!`;
+        displayResult.innerHTML = `The WINNER is <strong><u>${name}</u></strong>!`;
     }
 
     const displayTie = () => {
         displayResult.style.display = 'block';
-        displayResult.textContent = "The game ended in a Tie!";
+        displayResult.innerHTML = "The game ended in a TIE!";
     }
 
     return {updateBoard, resetBoard, displayWinner, displayTie};
@@ -255,6 +256,8 @@ const displayController = (function() {
 const getPlayerNames = (function() {
     const playerForm = document.getElementById("player-names");
     const grid = document.querySelector(".grid");
+    const displayTurn = document.querySelector(".player-turn");
+    
     playerForm.addEventListener("submit", (e) => {
         e.preventDefault();
         new FormData(playerForm);
@@ -266,8 +269,8 @@ const getPlayerNames = (function() {
     })
 
     const getPlayerNames = (data) => {
-        let player1 = data.get("player1");
-        let player2 = data.get("player2");
+        let player1 = data.get("player1").toUpperCase();
+        let player2 = data.get("player2").toUpperCase();
         gameBoard.resetBoard();
         playerForm.style.display = "None";
         if(!currentGame) {
@@ -280,7 +283,8 @@ const getPlayerNames = (function() {
         }
         currentGame.resetGame();
         grid.style.display = "grid";
-        
+        displayTurn.style.display = "block";
+        displayTurn.textContent = `${player1}'s turn (X)`;
     }
 
     return {};
